@@ -1,12 +1,13 @@
 import nfc
 import time
 import paho.mqtt.client as mqtt
+import datetime
 
 # got the idea from https://github.com/khan-farhan/Facility-management-using-NFC/blob/master/card_read.py
 
 def after5s(started):
 
-    return time.time() - started > 1
+    return time.time() - started > 5
 
 
 def read(client):
@@ -14,12 +15,11 @@ def read(client):
     last_known_tag = "None"
     clf = nfc.ContactlessFrontend('usb')
     while True:
-
-       def after5s(): return time.time() - started > 1
+       def after5s(): return time.time() - started > 5
        started = time.time()
 
        tag = clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=after5s)
-
+       clf.close()
        tag = str(tag)
        tag_id = tag.split(" ")[-1][3:-1]
        if tag_id != last_known_tag:
