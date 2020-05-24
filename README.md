@@ -3,6 +3,8 @@
 This connects a NFC Reader (like ACR122U-A9) to MQTT. It will publish the UID to the MQTT Server.
 This code is a result of a 2h hack (which was mostly installing libs and trying to find out how NFC works). 
 
+It will read a NFC card and reports it's UID to the MQTT broker. 
+
 
 You need to have libnfc installed on your system.
 Furthermore it requires the python-libs mentioned in requirements.txt.
