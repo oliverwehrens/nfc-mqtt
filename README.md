@@ -6,9 +6,34 @@ This is a result of a rainy sunday afternoon hack.
 
 ## Requirements
 
-You need to have libnfc installed on your system.
+You need to have libnfc installed on your system. I used a Raspberry Pi with Raspbian Minimal.
 
 I followed https://oneguyoneblog.com/2015/09/16/acr122u-nfc-usb-reader-raspberry-pi/
+
+```shell script
+sudo apt-get update -y
+sudo apt-get -y install subversion autoconf debhelper flex libusb-dev libpcsclite-dev libpcsclite1 libccid pcscd pcsc-tools libpcsc-perl libusb-1.0-0-dev libtool libssl-dev cmake checkinstall
+sudo apt-get -y install python3 pip3
+git clone https://github.com/nfc-tools/libnfc.git
+cd nfclib
+autoreconf -vis
+./configure -prefix=/usr -sysconfdir=/etc --with-drivers=acr122_usb
+make
+sudo make install
+vi  /etc/modprobe.d/blacklist.conf
+```
+added to that file:
+```shell script
+blacklist pn533
+blacklist nfc
+```
+
+Next:
+
+```shell script
+sudo udevadm control -R
+reboot
+```
 
 Furthermore it requires the python-libs mentioned in requirements.txt.
 
@@ -18,6 +43,7 @@ pip install -r requirements.txt
 ## Things which you want to configure:
 
 - MQTT Server in nfc2mqtt_service.py
+- You can also edit the MQTT topic 
 
 Yes, this could go into a configuration file.
 
