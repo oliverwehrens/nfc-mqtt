@@ -45,8 +45,9 @@ class TagScan:
 
 
 if __name__ == "__main__":
-    client = mqtt.Client("nfcreader")
-    client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
-    scanner = TagScan(client)
+    mqtt_client = mqtt.Client("nfcreader")
+    mqtt_client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
+    mqtt_client.loop_start()
+    scanner = TagScan(mqtt_client)
     while True:
         scanner.scan()
