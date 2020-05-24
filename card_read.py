@@ -2,6 +2,8 @@ import nfc
 import time
 import paho.mqtt.client as mqtt
 
+# got the idea from https://github.com/khan-farhan/Facility-management-using-NFC/blob/master/card_read.py
+
 def after5s(started):
 
     return time.time() - started > 5
