@@ -10,9 +10,16 @@ Furthermore it requires the python-libs mentioned in requirements.txt.
 
 ## Things which you want to configure:
 
-- MQTT Server in card_read.py
-- Location of the card_read.py in nfc.service
+- MQTT Server in service.py
+- Location of the service.py in nfc.service
 
 ## Install & Run
 
 After configuration run ./install.sh to copy the systemd file in it's place and enable and start the service.
+
+
+## FAQ
+
+*Is this work in progess?*
+
+Yes, it is.

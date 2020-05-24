@@ -3,7 +3,7 @@ Description=nfc
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/pi/nfc/card_read.py
+ExecStart=/usr/bin/python3 /home/pi/nfc/service.py
 WorkingDirectory=/home/pi
 StandardOutput=inherit
 StandardError=inherit
