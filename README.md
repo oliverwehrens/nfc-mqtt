@@ -10,7 +10,7 @@ Furthermore it requires the python-libs mentioned in requirements.txt.
 
 ## Things which you want to configure:
 
-- MQTT Server in service.py
+- MQTT Server in nfc_service.py
 - Location of the service.py in nfc.service
 
 ## Install & Run
