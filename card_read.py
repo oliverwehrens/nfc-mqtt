@@ -6,29 +6,32 @@ import paho.mqtt.client as mqtt
 
 def after5s(started):
 
-    return time.time() - started > 5
+    return time.time() - started > 1
 
 
 def read(client):
 
+    last_known_tag = "None"
     clf = nfc.ContactlessFrontend('usb')
+    while True:
 
-    def after5s(): return time.time() - started > 5
-    started = time.time()
+       def after5s(): return time.time() - started > 1
+       started = time.time()
 
-    tagx = clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=after5s)
-    tag = str(tagx)
-    if tag != "":
-       print(tag)
-       tag = tag.split(" ")[-1]
-       json = '{"uid":"'+tag[3:-1]+'", "response":"'+str(tagx)+'"}'
-       client.publish("nfc/tag", json)
-    
+       tag = clf.connect(rdwr={'on-connect': lambda tag: False}, terminate=after5s)
+
+       tag = str(tag)
+       tag_id = tag.split(" ")[-1][3:-1]
+       if tag_id != last_known_tag:
+          print(tag)
+          json = '{"uid":"'+tag_id+'", "response":"'+str(tag)+'"}'
+          client.publish("nfc/tag", json)
+          last_known_tag = tag_id
+
 
 
 if __name__ == '__main__':
 
     client = mqtt.Client("nfcreader")
-    client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="") 
-    while True:
-       read(client)
+    client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
+    read(client)
