@@ -13,8 +13,9 @@ class TagScan:
         self.client = client_mqtt
         self.terminate = False
 
-    def run(self):
+    def scan(self):
         print("Starting ..")
+        self.terminate = False
         clf = nfc.ContactlessFrontend("usb")
         rdwr_options = {
             "on-connect": self.on_tag_connect,
@@ -35,6 +36,7 @@ class TagScan:
             self.client.publish("nfc/tag", json)
             self.last_known_tag_id = tag_id
             self.tag_connect_time = time.time()
+            self.terminate = True
         return True
 
     def on_tag_release(self, tag):
@@ -46,4 +48,5 @@ if __name__ == "__main__":
     client = mqtt.Client("nfcreader")
     client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
     scanner = TagScan(client)
-    scanner.run()
+    while True:
+        scanner.scan()
