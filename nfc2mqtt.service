@@ -3,8 +3,8 @@ Description=nfc
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/pi/nfc/nfc_service.py
-WorkingDirectory=/home/pi
+ExecStart=/usr/bin/python3 /usr/local/bin/nfc2mqtt_service.py
+WorkingDirectory=/usr/local
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
