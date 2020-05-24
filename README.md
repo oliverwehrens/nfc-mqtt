@@ -6,9 +6,11 @@ You need to have libnfc installed on your system.
 Furthermore it requires the python-libs mentioned in requirements.txt.
 
 
-Things which you want to configure:
+## Things which you want to configure:
 
 - MQTT Server in card_read.py
 - Location of the card_read.py in nfc.service
 
+## Install & Run
 
+After configuration run ./install.sh to copy the systemd file in it's place and enable and start the service.
