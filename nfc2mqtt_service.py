@@ -1,9 +1,19 @@
+import json
 import time
 
 import nfc
 import paho.mqtt.client as mqtt
 
 # see https://readthedocs.org/projects/nfcpy/downloads/pdf/develop/ for more options
+
+
+def find_tag_type(tag_info: str) -> str:
+    return tag_info.split(" ")[0]
+
+
+def get_id(tag_info: str) -> str:
+    split = tag_info.split(" ")[-1]
+    return split[3 : len(split)]
 
 
 class TagScan:
@@ -29,20 +39,29 @@ class TagScan:
         print("CLF close.")
         clf.close()
 
+    def tag_is_not_last_scanned_tag(self, tag_id):
+        return self.last_known_tag_id != tag_id
+
+    def scan_timeout_has_passed(self) -> bool:
+        now = time.time()
+        return now > self.tag_connect_time + 1
+
     def on_tag_connect(self, tag):
         print("Tag connect: " + str(tag))
-        now = time.time()
-        tag_id = str(tag).split(" ")[-1][3:-1]
-        if self.last_known_tag_id != tag_id or now > self.tag_connect_time + 1:
-            print("Send MQTT message.")
-            json = '{"uid":"' + tag_id + '", "response":"' + str(tag) + '"}'
-            mqtt_client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
-            self.client.publish("nfc/tag", json)
-            mqtt_client.disconnect()
+        tag_id = get_id(str(tag))
+        if self.tag_is_not_last_scanned_tag(tag_id) or self.scan_timeout_has_passed():
+            data = {"uid": tag_id, "tag_type": find_tag_type(str(tag)), "response": str(tag)}
+            self.publish_to_mqtt(data)
             self.last_known_tag_id = tag_id
             self.tag_connect_time = time.time()
             self.terminate = True
         return True
+
+    def publish_to_mqtt(self, data):
+        mqtt_client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
+        print("Send MQTT message.")
+        self.client.publish("nfc/tag", json.dumps(data))
+        mqtt_client.disconnect()
 
     def on_tag_release(self, tag):
         print("Tag release: " + str(tag))
