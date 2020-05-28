@@ -18,7 +18,6 @@ def get_id(tag_info: str) -> str:
 
 class TagScan:
     def __init__(self, client_mqtt):
-        self.last_known_tag_id = None
         self.tag_connect_time = 0
         self.client = client_mqtt
         self.terminate = False
@@ -39,9 +38,6 @@ class TagScan:
         print("CLF close.")
         clf.close()
 
-    def tag_is_not_last_scanned_tag(self, tag_id):
-        return self.last_known_tag_id != tag_id
-
     def scan_timeout_has_passed(self) -> bool:
         now = time.time()
         return now > self.tag_connect_time + 1
@@ -49,13 +45,15 @@ class TagScan:
     def on_tag_connect(self, tag):
         print("Tag connect: " + str(tag))
         tag_id = get_id(str(tag))
-        if self.tag_is_not_last_scanned_tag(tag_id) or self.scan_timeout_has_passed():
+        if self.scan_timeout_has_passed():
             data = {"uid": tag_id, "tag_type": find_tag_type(str(tag)), "response": str(tag)}
             self.publish_to_mqtt(data)
-            self.last_known_tag_id = tag_id
-            self.tag_connect_time = time.time()
-            self.terminate = True
+            self.set_scan_timeout()
         return True
+
+    def set_scan_timeout(self):
+        self.tag_connect_time = time.time()
+        self.terminate = True
 
     def publish_to_mqtt(self, data):
         mqtt_client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
